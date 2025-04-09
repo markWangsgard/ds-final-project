@@ -62,6 +62,7 @@ public class Dungeon
         Console.WriteLine($"Rooms Visited: {string.Join(", ", roomsVisited)}");
         Console.WriteLine($"Options");
         List<int> availableRooms = adjacencyList[room].Select(r => r.ToRoom).ToList();
+        availableRooms.Sort();
         for (int i = 1; i <= availableRooms.Count; i++)
         {
             Console.WriteLine($"{i}: {availableRooms[i - 1]}");
