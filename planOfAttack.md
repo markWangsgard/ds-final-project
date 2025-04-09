@@ -1,7 +1,6 @@
-1. Generate Dungeon
-2. Traverse Dungeon
-3. Traverse Dungeon via console
-4. Generate Challenges
-5. Hero takes damage
-6. Inventory/Items
-7. Game over visuals
+1. Generate Dungeon - Complete
+2. Traverse Dungeon via console
+3. Generate Challenges
+4. Hero takes damage
+5. Inventory/Items
+6. Game over visuals
