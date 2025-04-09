@@ -2,6 +2,11 @@
 
 public record Edge
 {
-    public int ToRoom { get; set; }
+    public int ToRoom;
     public Challenge Challenge { get; set; } = new Challenge();
+
+    public Edge(int toRoom)
+    {
+        this.ToRoom = toRoom;
+    }
 }
