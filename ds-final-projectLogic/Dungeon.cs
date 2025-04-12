@@ -4,13 +4,13 @@ public class Dungeon
 {
     public Dictionary<int, List<Edge>> adjacencyList = new();
     public int startRoom = 0;
-    public int endRoom = 1;
+    public int endRoom = 100;
     public int currentRoom { get; set; }
 
     public Dungeon(int totalNumberOfRooms = 15, int setSolutionLength = 10, int numberOfConnections = 50)
     {
         AddRoom(0);
-        AddRoom(1);
+        AddRoom(100);
         List<int> randomRooms = new List<int>();
         for (int i = 0; i < totalNumberOfRooms; i++)
         {
@@ -37,7 +37,7 @@ public class Dungeon
                 AddEdge(randomRooms[i - 1], new Edge(randomRooms[i]));
             }
         }
-        AddEdge(randomRooms[setSolutionLength - 1], new Edge(1));
+        AddEdge(randomRooms[setSolutionLength - 1], new Edge(100));
         for (int i = 0; i < numberOfConnections; i++)
         {
             int random1 = Random.Shared.Next(0, randomRooms.Count());
@@ -53,11 +53,17 @@ public class Dungeon
             //Console.WriteLine($"Room: {room} - Connections: {String.Join(", ", adjacencyList[room])}");
             List<int> edges = adjacencyList[room].Select(r => r.ToRoom).ToList();
             Console.WriteLine($"Room: {room} [Total: {edges.Count()}] - Connections: {string.Join(", ", edges)}");
+            Console.WriteLine($"Connections");
+            foreach (var edge in adjacencyList[room])
+            {
+                Console.WriteLine($"To Room: {edge.ToRoom}  Challenge: {edge.Challenge.DifficultyLevel} {edge.Challenge.DifficultyType}");
+            }
+            Console.WriteLine($"");
         }
     }
     public void displayRoom(int room, List<int> roomsVisited)
     {
-        Console.Clear();
+        //Console.Clear();
         Console.WriteLine($"Current Room: {room}");
         Console.WriteLine($"Rooms Visited: {string.Join(", ", roomsVisited)}");
         Console.WriteLine($"Options");
@@ -68,6 +74,24 @@ public class Dungeon
             Console.WriteLine($"{i}: {availableRooms[i - 1]}");
         }
         Console.Write("Please select the room you wish to enter: ");
+    }
+    public void UseEdge(Hero hero, int currentRoom, int toRoom)
+    {
+        Challenge challenge = adjacencyList[currentRoom].Find(e => e.ToRoom == toRoom).Challenge;
+        ChallengesBST.Delete(challenge.ID);
+
+        if (challenge.DifficultyType == ChallengeType.Strength && hero.Strength < challenge.DifficultyLevel)
+        {
+            hero.Health = challenge.DifficultyLevel - hero.Strength;
+        }
+        if (challenge.DifficultyType == ChallengeType.Intelligence && hero.Intelligence < challenge.DifficultyLevel)
+        {
+            hero.Health = challenge.DifficultyLevel - hero.Intelligence;
+        }
+        if (challenge.DifficultyType == ChallengeType.Agility && hero.Agility < challenge.DifficultyLevel)
+        {
+            hero.Health = challenge.DifficultyLevel - hero.Agility;
+        }
     }
 
     public bool RoomExists(int room)
