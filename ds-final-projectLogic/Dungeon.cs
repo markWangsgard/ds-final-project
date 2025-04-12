@@ -1,11 +1,12 @@
-﻿namespace ds_final_projectLogic;
+﻿using System.Numerics;
+
+namespace ds_final_projectLogic;
 
 public class Dungeon
 {
     public Dictionary<int, List<Edge>> adjacencyList = new();
     public int startRoom = 0;
     public int endRoom = 100;
-    public int currentRoom { get; set; }
 
     public Dungeon(int totalNumberOfRooms = 15, int setSolutionLength = 10, int numberOfConnections = 50)
     {
@@ -30,7 +31,7 @@ public class Dungeon
             int roomToAdd = randomRooms[i];
             if (i - 1 == -1)
             {
-                AddEdge(0, new Edge(randomRooms[i]));
+                AddEdge(0, new Edge(randomRooms[i], true));
             }
             else
             {
@@ -61,9 +62,8 @@ public class Dungeon
             Console.WriteLine($"");
         }
     }
-    public void displayRoom(int room, List<int> roomsVisited)
+    private void displayRoom(int room, List<int> roomsVisited)
     {
-        //Console.Clear();
         Console.WriteLine($"Current Room: {room}");
         Console.WriteLine($"Rooms Visited: {string.Join(", ", roomsVisited)}");
         Console.WriteLine($"Options");
@@ -71,27 +71,44 @@ public class Dungeon
         availableRooms.Sort();
         for (int i = 1; i <= availableRooms.Count; i++)
         {
-            Console.WriteLine($"{i}: {availableRooms[i - 1]}");
+            Console.WriteLine($"{i}: Room {availableRooms[i - 1]}");
         }
         Console.Write("Please select the room you wish to enter: ");
     }
-    public void UseEdge(Hero hero, int currentRoom, int toRoom)
+    public void VisitRoom(Hero hero, int room)
     {
-        Challenge challenge = adjacencyList[currentRoom].Find(e => e.ToRoom == toRoom).Challenge;
-        ChallengesBST.Delete(challenge.ID);
+        int currentRoom = hero.RoomsVisited.Last();
+        Challenge challenge = adjacencyList[currentRoom].Find(e => e.ToRoom == room).Challenge;
+        if (challenge != null)
+        {
 
-        if (challenge.DifficultyType == ChallengeType.Strength && hero.Strength < challenge.DifficultyLevel)
-        {
-            hero.Health = challenge.DifficultyLevel - hero.Strength;
+            ChallengesBST.Delete(challenge.ID);
+
+            if (challenge.DifficultyType == ChallengeType.Strength && hero.Strength < challenge.DifficultyLevel)
+            {
+                hero.Health -= challenge.DifficultyLevel - hero.Strength;
+            }
+            if (challenge.DifficultyType == ChallengeType.Intelligence && hero.Intelligence < challenge.DifficultyLevel)
+            {
+                hero.Health -= challenge.DifficultyLevel - hero.Intelligence;
+            }
+            if (challenge.DifficultyType == ChallengeType.Agility && hero.Agility < challenge.DifficultyLevel)
+            {
+                hero.Health -= challenge.DifficultyLevel - hero.Agility;
+            }
         }
-        if (challenge.DifficultyType == ChallengeType.Intelligence && hero.Intelligence < challenge.DifficultyLevel)
+
+        if (hero.Health <= 0)
         {
-            hero.Health = challenge.DifficultyLevel - hero.Intelligence;
+            return;
         }
-        if (challenge.DifficultyType == ChallengeType.Agility && hero.Agility < challenge.DifficultyLevel)
-        {
-            hero.Health = challenge.DifficultyLevel - hero.Agility;
-        }
+
+        //success
+        Console.Clear();
+        Console.WriteLine($"Hero Health: {hero.Health}");
+        displayRoom(room, hero.RoomsVisited);
+        hero.RoomsVisited.Add(room);
+
     }
 
     public bool RoomExists(int room)

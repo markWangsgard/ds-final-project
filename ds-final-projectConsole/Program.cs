@@ -8,20 +8,39 @@ dungeon1.DisplayDungeon();
 
 
 Hero player = new Hero();
-int CurrentRoom = 0;
-List<int> roomsVisited = new List<int>();
-while (player.Health > 0 || CurrentRoom != 1)
+int CurrentRoom = dungeon1.adjacencyList[0][0].ToRoom;
+do
 {
-    if (CurrentRoom == 100)
+    dungeon1.VisitRoom(player, CurrentRoom);
+    if (player.Health <= 0)
     {
         break;
     }
-    Console.WriteLine($"Hero Health: {player.Health}");
-    dungeon1.displayRoom(CurrentRoom, roomsVisited);
-    roomsVisited.Add(CurrentRoom);
-    int selection = int.Parse(Console.ReadKey(true).KeyChar.ToString());
-    dungeon1.UseEdge(player, CurrentRoom, selection);
-    CurrentRoom = dungeon1.adjacencyList[CurrentRoom][selection-1].ToRoom;
+    int selection;
+    do
+    {
+        try
+        {
+            selection = int.Parse(Console.ReadKey(true).KeyChar.ToString());
+        }
+        catch
+        {
+            selection = 0;
+        }
+    }
+    while (selection < 0 || selection > dungeon1.adjacencyList[CurrentRoom].Count);
+    CurrentRoom = dungeon1.adjacencyList[CurrentRoom][selection - 1].ToRoom;
+    Console.WriteLine();
 }
+while (player.Health > 0 && CurrentRoom != 100);
+
+
 Console.Clear();
-Console.WriteLine("You Won!");
+if (player.Health <= 0)
+{
+    Console.WriteLine("You Died!");
+}
+else
+{
+    Console.WriteLine("You Escaped!");
+}

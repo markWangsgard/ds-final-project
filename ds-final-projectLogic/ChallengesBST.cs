@@ -99,7 +99,7 @@ public static class ChallengesBST
     }
     public static void Delete(int targetID)
     {
-        DeleteNode(RootNode, targetID);
+        RootNode = DeleteNode(RootNode, targetID);
     }
     private static BSTNode DeleteNode(BSTNode node, int targetID)
     {
@@ -229,11 +229,7 @@ public static class ChallengesBST
     {
         BSTNode currentNode = RootNode;
         while (currentNode.Data.ID != challengeId)
-        {
-            if (currentNode == null)
-            {
-                return null;
-            }
+        { 
             if (currentNode.Data.ID < challengeId)
             {
                 currentNode = currentNode.Right;
@@ -241,6 +237,10 @@ public static class ChallengesBST
             else
             {
                 currentNode = currentNode.Left;
+            }
+            if (currentNode == null)
+            {
+                return null;
             }
         }
         return currentNode.Data;

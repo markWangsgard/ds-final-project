@@ -12,7 +12,7 @@ public record Edge
     }
 
 
-    public Edge(int toRoom)
+    public Edge(int toRoom, bool first = false)
     {
         this.ToRoom = toRoom;
         ChallengeID = Random.Shared.Next(100);
@@ -20,7 +20,7 @@ public record Edge
         {
             ChallengeID = Random.Shared.Next(100);
         }
-        Challenge temp = new Challenge(ChallengeID);
+        Challenge temp = new Challenge(ChallengeID, first);
         ChallengesBST.Insert(temp);
     }
 }

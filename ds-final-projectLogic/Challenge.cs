@@ -6,22 +6,17 @@ public class Challenge
     public int DifficultyLevel { get; set; }
     public ChallengeType DifficultyType { get; set; }
 
-    public Challenge(int id)
+    public Challenge(int id, bool first = false)
     {
         ID = id;
         DifficultyType = (ChallengeType)Random.Shared.Next(3);
-        DifficultyLevel = Random.Shared.Next(6, 10);
-        //if ((int)DifficultyType == 0)
-        //{
-        //    DifficultyLevel = Random.Shared.Next(6, 10);
-        //}
-        //else if ((int)DifficultyType == 1)
-        //{
-        //    DifficultyLevel = Random.Shared.Next(7, 10);
-        //}
-        //else
-        //{
-        //    DifficultyLevel = Random.Shared.Next(8, 10);
-        //}
+        if (first)
+        {
+            DifficultyLevel = 0;
+        }
+        else
+        { 
+            DifficultyLevel = Random.Shared.Next(6, 10);
+        }
     }
 }
