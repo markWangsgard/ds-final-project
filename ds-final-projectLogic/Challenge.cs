@@ -10,13 +10,6 @@ public class Challenge
     {
         ID = id;
         DifficultyType = (ChallengeType)Random.Shared.Next(3);
-        if (first)
-        {
-            DifficultyLevel = 0;
-        }
-        else
-        { 
-            DifficultyLevel = Random.Shared.Next(6, 10);
-        }
+        DifficultyLevel = Random.Shared.Next(6, 10);
     }
 }

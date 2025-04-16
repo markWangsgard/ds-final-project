@@ -32,12 +32,12 @@ public static class ChallengesBST
         while (currentNode.Data.ID != targetId);
         return true;
     }
-    static int GetHeight(BSTNode node)
+    private static int GetHeight(BSTNode node)
     {
         return node == null ? 0 : node.Height;
     }
 
-    static int GetBalance(BSTNode node)
+    private static int GetBalance(BSTNode node)
     {
         return node == null ? 0 : GetHeight(node.Left) - GetHeight(node.Right);
     }
