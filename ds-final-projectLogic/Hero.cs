@@ -17,5 +17,7 @@ public record Hero
         Strength = strength;
         Agility = agility;
         Intelligence = intelligence;
+        Inventory.Enqueue(new Item("Boots of the Windrunner", 5, ChallengeType.Agility));
+        Inventory.Enqueue(new Item("Pendant of Forgotten Lore", 5, ChallengeType.Intelligence));
     }
 }

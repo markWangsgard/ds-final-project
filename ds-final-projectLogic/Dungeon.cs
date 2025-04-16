@@ -115,7 +115,11 @@ public class Dungeon
         {
             return;
         }
-
+        if (adjacencyList[room].Count == 0)
+        {
+            Console.WriteLine($"You have hit a dead end! You will be returned to room {currentRoom}");
+            room = currentRoom;
+        }
         //success
         Console.Clear();
         // hero Stats
