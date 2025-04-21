@@ -39,6 +39,7 @@ public class Dungeon
             }
         }
         AddEdge(randomRooms[setSolutionLength - 1], new Edge(100));
+        randomRooms.Add(100);
         for (int i = 0; i < numberOfConnections; i++)
         {
             int random1 = Random.Shared.Next(0, randomRooms.Count());
@@ -62,7 +63,7 @@ public class Dungeon
             Console.WriteLine($"");
         }
     }
-    private void displayRoom(int room, List<int> roomsVisited)
+    private void displayRoom(int room, Stack<int> roomsVisited)
     {
         Console.WriteLine();
         Console.WriteLine($"Current Room: {room}");
@@ -74,13 +75,13 @@ public class Dungeon
         availableRooms.Sort((a, b) => a.ToRoom - b.ToRoom);
         for (int i = 0; i < availableRooms.Count; i++)
         {
-                Console.WriteLine($"{i + 1,1} | {availableRooms[i].ToRoom,11} | {(availableRooms[i].Challenge != null ? availableRooms[i].Challenge.DifficultyType : "Path Taken"),13} | {(availableRooms[i].Challenge != null ? availableRooms[i].Challenge.DifficultyLevel : "Path Taken"),14} |");
+            Console.WriteLine($"{i + 1,1} | {availableRooms[i].ToRoom,11} | {(availableRooms[i].Challenge != null ? availableRooms[i].Challenge.DifficultyType : "Path Taken"),13} | {(availableRooms[i].Challenge != null ? availableRooms[i].Challenge.DifficultyLevel : "Path Taken"),14} |");
         }
         Console.Write("Please select the room you wish to enter: ");
     }
     public void VisitRoom(Hero hero, int room)
     {
-        int currentRoom = hero.RoomsVisited.Last();
+        int currentRoom = hero.RoomsVisited.Peek();
         Challenge challenge = adjacencyList[currentRoom].Find(e => e.ToRoom == room).Challenge;
         if (challenge != null)
         {
@@ -89,7 +90,7 @@ public class Dungeon
             int intelligenceLevel = hero.Intelligence;
             if (hero.Inventory.Count() > 0 && hero.Inventory.Peek().BoostType == challenge.DifficultyType)
             {
-                var boost = hero.Inventory.Dequeue();
+                var boost = hero.Inventory.Pop();
                 strengthLevel += boost.BoostType == ChallengeType.Strength ? boost.BoostValue : 0;
                 agilityLevel += boost.BoostType == ChallengeType.Agility ? boost.BoostValue : 0;
                 intelligenceLevel += boost.BoostType == ChallengeType.Intelligence ? boost.BoostValue : 0;
@@ -117,8 +118,13 @@ public class Dungeon
         }
         if (adjacencyList[room].Count == 0)
         {
-            Console.WriteLine($"You have hit a dead end! You will be returned to room {currentRoom}");
-            room = currentRoom;
+            Stack<int> tempStack = new Stack<int>();
+            while (adjacencyList[tempStack.Peek()].Count <= 1)
+            {
+                tempStack.Push(hero.RoomsVisited.Pop());
+            }
+            Console.WriteLine($"You have hit a dead end! You will be returned to room {tempStack.Peek()}");
+            room = tempStack.Pop();
         }
         //success
         Console.Clear();
@@ -143,9 +149,18 @@ public class Dungeon
             Console.WriteLine($"You found {loot.Type}!");
             if (hero.Inventory.Count == 5)
             {
-                hero.Inventory.Dequeue();
+                Stack<Item> tempStack = new();
+                for (int i = 0; i < 4; i++)
+                {
+                    tempStack.Push(hero.Inventory.Pop());
+                }
+                hero.Inventory.Pop();
+                for (int i = 0; i < 4; i++)
+                {
+                    hero.Inventory.Push(tempStack.Pop());
+                }
             }
-            hero.Inventory.Enqueue(loot);
+            hero.Inventory.Push(loot);
             Console.WriteLine($"It provides +{loot.BoostValue} {loot.BoostType}");
         }
         else
@@ -162,7 +177,7 @@ public class Dungeon
         }
 
         displayRoom(room, hero.RoomsVisited);
-        hero.RoomsVisited.Add(room);
+        hero.RoomsVisited.Push(room);
 
     }
 
@@ -209,27 +224,27 @@ public class Dungeon
     {
         if (adjacencyList.ContainsKey(room))
         {
-            Console.WriteLine("Room Already Added");
+            //Console.WriteLine("Room Already Added");
             return;
         }
 
         adjacencyList.Add(room, new List<Edge>());
-        Console.WriteLine($"{room} added");
+        //Console.WriteLine($"{room} added");
     }
     public void AddEdge(int fromRoom, Edge edge)
     {
         if (!RoomExists(fromRoom) || !RoomExists(edge.ToRoom))
         {
-            Console.WriteLine($"One or both rooms do not exist - {fromRoom} -> {edge.ToRoom}");
+            //Console.WriteLine($"One or both rooms do not exist - {fromRoom} -> {edge.ToRoom}");
             return;
         }
         if (EdgeExists(fromRoom, edge.ToRoom))
         {
-            Console.WriteLine($"Edge from {fromRoom} to {edge.ToRoom} already exits");
+            //Console.WriteLine($"Edge from {fromRoom} to {edge.ToRoom} already exits");
             return;
         }
 
         adjacencyList[fromRoom].Add(edge);
-        Console.WriteLine($"Edge from {fromRoom} to {edge.ToRoom} added");
+        //Console.WriteLine($"Edge from {fromRoom} to {edge.ToRoom} added");
     }
 }
